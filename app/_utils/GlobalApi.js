@@ -22,7 +22,7 @@ const GetCategory=async()=>{
 
 const query=gql`
     query Categories {
-  categories(first:50){
+  categories{
     id
     slug
     name
@@ -83,7 +83,9 @@ const GetBusinessDetail=async(businessSlug)=>{
       url
     }
     categories{
+      id
       name
+      slug
     }
     id
     name
@@ -96,7 +98,7 @@ const GetBusinessDetail=async(businessSlug)=>{
           id 
           name
         }
-        menuItem{
+        menuItem(first: 100){
             id
             name
             description
@@ -222,58 +224,77 @@ const GetBusinessDetail=async(businessSlug)=>{
     }
   }
 
-  const AddNewReview = async(data)=>{
+  const AddNewReview = async (data) => {
     const query = gql`
-    mutation AddNewReview {
-      createReview(
-        data: {email: "`+data.email+`", 
-          profileImage: "`+data.profileImage+`", 
-          reviewText: "`+data.reviewText+`", 
-          star: `+data.star+`, 
-          userName: "`+data.userName+`", 
-          restaurant: {connect:{slug: "`+data.RestroSlug+`"}}}
+      mutation AddNewReview(
+        $email: String!
+        $profileImage: String!
+        $reviewText: String!
+        $star: Int!
+        $userName: String!
+        $restaurantSlug: String!
       ) {
-        id
-      }
-      publishManyReviewsConnection(to: PUBLISHED){
-        edges{
-          node{
-            id
+        createReview(
+          data: {
+            email: $email
+            profileImage: $profileImage
+            reviewText: $reviewText
+            star: $star
+            userName: $userName
+            restaurant: { connect: { slug: $restaurantSlug } }
+          }
+        ) {
+          id
+        }
+        publishManyReviewsConnection(to: PUBLISHED) {
+          edges {
+            node {
+              id
+            }
           }
         }
       }
-    }`
-    
+    `;
+  
     try {
-      const result = await client.request(query);
+      const result = await client.request(query, {
+        email: data.email,
+        profileImage: data.profileImage,
+        reviewText: data.reviewText, // Do not escape newlines here
+        star: data.star,
+        userName: data.userName,
+        restaurantSlug: data.RestroSlug,
+      });
       return result;
     } catch (error) {
-      console.error("Error fetching business:", error);
+      console.error("Error adding review:", error);
       return [];
     }
-  }
-
-  const getRestaurantReview =async(slug)=>{
+  };
+  
+  const getRestaurantReview = async (slug) => {
     const query = gql`
-    query RestaurantReviews {
-      reviews(where: {restaurant: {slug: "`+slug+`"}}, orderBy: publishedAt_DESC) {
-        email
-        id
-        profileImage
-        publishedAt
-        userName
-        star
-        reviewText
+      query RestaurantReviews($slug: String!) {
+        reviews(where: { restaurant: { slug: $slug } }, orderBy: publishedAt_DESC) {
+          email
+          id
+          profileImage
+          publishedAt
+          userName
+          star
+          reviewText
+        }
       }
-    }`
+    `;
+  
     try {
-      const result = await client.request(query);
+      const result = await client.request(query, { slug });
       return result;
     } catch (error) {
-      console.error("Error fetching business:", error);
+      console.error("Error fetching reviews:", error);
       return [];
     }
-  }
+  };
 
   const CreateNewOrder = async (data) =>{
     const query = gql`

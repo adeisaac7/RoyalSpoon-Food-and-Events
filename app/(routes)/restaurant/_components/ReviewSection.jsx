@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 import ReviewList from './ReviewList'
 
 
-function ReviewSection({restaurant}) {
+function ReviewSection({restaurant, onReviewUpdate}) {
     const [rating, setRating] = useState(0)
     const [reviewText, setReviewText] = useState();
     const {user} = useUser();
@@ -45,10 +45,11 @@ function ReviewSection({restaurant}) {
 
     const getReviewList = ()=>{
         GlobalApi.getRestaurantReview(restaurant.slug).then(resp=>{
-            console.log(resp)
+            console.log("Fetched Reviews:", resp?.reviews)
             setReviewList(resp?.reviews)
-        })
-    }
+            onReviewUpdate(resp?.reviews);
+        });
+    };
 
   return (
     <div className='grid grid-col-1 md:grid-cols-3 mt-10 gap-10'>

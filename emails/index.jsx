@@ -1,11 +1,8 @@
-import React from 'react';
-
 const OrderConfirmationEmail = ({ order }) => {
   if (!order) {
-    return <div>No order details available.</div>;
+    return '<div>No order details available.</div>';
   }
 
- 
   const groupedItems = order.orderItems.reduce((acc, item) => {
     if (acc[item.productName]) {
       acc[item.productName].quantity += item.quantity || 1;
@@ -15,7 +12,7 @@ const OrderConfirmationEmail = ({ order }) => {
         productName: item.productName,
         quantity: item.quantity || 1,
         price: item.price,
-        totalPrice: item.price * (item.quantity || 1), 
+        totalPrice: item.price * (item.quantity || 1),
       };
     }
     return acc;
@@ -23,153 +20,67 @@ const OrderConfirmationEmail = ({ order }) => {
 
   const groupedItemsArray = Object.values(groupedItems);
 
-  return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>Order Confirmed!</h1>
-      <p style={styles.text}>
-        Thank you for your order, <strong>{order.userName}</strong>!
+  return `
+    <div style="font-family: Arial, sans-serif; background-color: #f3f4f6; padding: 20px; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+      <h1 style="font-size: 24px; color: #16a34a; font-weight: bold; margin-bottom: 20px; text-align: center;">Order Confirmed!</h1>
+      <p style="font-size: 16px; color: #4b5563; margin-bottom: 20px; text-align: center;">
+        Thank you for your order, <strong>${order.userName}</strong>!
       </p>
-      <p style={styles.text}>
-        Your order from <strong>{order.restaurantName}</strong> has been placed successfully.
+      <p style="font-size: 16px; color: #4b5563; margin-bottom: 20px; text-align: center;">
+        Your order from <strong>Royalspoon Food and Events</strong> has been placed successfully.
       </p>
 
-      <div style={styles.detailsContainer}>
-        <h2 style={styles.subHeader}>Order Details</h2>
-
-        {/* Table for Order Items */}
-        <table style={styles.table}>
+      <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <h2 style="font-size: 20px; color: #1f2937; font-weight: 600; margin-bottom: 15px; text-align: center;">Order Details</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
           <thead>
             <tr>
-              <th style={styles.tableHeader}>Item</th>
-              <th style={styles.tableHeader}>Quantity</th>
-              <th style={styles.tableHeader}>Total Price</th>
+              <th style="background-color: #e5e7eb; padding: 10px; text-align: left; font-size: 16px; color: #374151;">Item</th>
+              <th style="background-color: #e5e7eb; padding: 10px; text-align: left; font-size: 16px; color: #374151;">Quantity</th>
+              <th style="background-color: #e5e7eb; padding: 10px; text-align: left; font-size: 16px; color: #374151;">Total Price</th>
             </tr>
           </thead>
           <tbody>
-            {groupedItemsArray.map((item, index) => (
-              <tr key={index}>
-                <td style={styles.tableCell}>{item.productName}</td>
-                <td style={styles.tableCell}>{item.quantity}</td>
-                <td style={styles.tableCell}>₦{item.totalPrice.toFixed(2)}</td>
+            ${groupedItemsArray
+              .map(
+                (item) => `
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 16px; color: #4b5563;">${item.productName}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 16px; color: #4b5563;">${item.quantity}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 16px; color: #4b5563;">₦${item.totalPrice.toFixed(2)}</td>
               </tr>
-            ))}
+            `
+              )
+              .join('')}
           </tbody>
         </table>
-
-        {/* Total Amount */}
-        <p style={styles.totalAmount}>
-          <strong>Total Amount:</strong> ₦{order.totalAmount.toFixed(2)}
+        <p style="font-size: 18px; color: #1f2937; font-weight: 600; text-align: center; margin-top: 20px;">
+          <strong>Total Amount:</strong> ₦${order.totalAmount.toFixed(2)} (Including VAT)
+          <br />(Delivery fee will be paid when your order arrives)
         </p>
       </div>
 
-      {/* Delivery Information */}
-      <div style={styles.deliveryInfo}>
-        <h2 style={styles.subHeader}>Delivery Information</h2>
-        <p style={styles.detailItem}>
-          <strong>Name:</strong> {order.userName}
+      <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <h2 style="font-size: 20px; color: #1f2937; font-weight: 600; margin-bottom: 15px; text-align: center;">Delivery Information</h2>
+        <p style="font-size: 16px; color: #4b5563; margin-bottom: 10px;">
+          <strong>Name:</strong> ${order.userName}
         </p>
-        <p style={styles.detailItem}>
-          <strong>Phone:</strong> {order.phone}
+        <p style="font-size: 16px; color: #4b5563; margin-bottom: 10px;">
+          <strong>Phone:</strong> ${order.phone}
         </p>
-        <p style={styles.detailItem}>
-          <strong>Address:</strong> {order.address}, {order.zipCode}
+        <p style="font-size: 16px; color: #4b5563; margin-bottom: 10px;">
+          <strong>Address:</strong> ${order.address}, ${order.zipCode}
         </p>
       </div>
 
-      <p style={styles.footerText}>
-        If you have any questions, please contact us at{' '}
-        <a href="mailto:royalspoonfoods4@gmail.com" style={styles.link}>
+      <p style="font-size: 14px; color: #6b7280; margin-top: 20px; text-align: center;">
+        If you have any questions, please contact us at
+        <a href="mailto:royalspoonfoods4@gmail.com" style="color: #3b82f6; text-decoration: none;">
           royalspoonfoods4@gmail.com
-        </a>
-        .
+        </a>.
       </p>
     </div>
-  );
-};
-
-const styles = {
-  container: {
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f3f4f6',  
-    padding: '20px',
-    borderRadius: '8px',
-    maxWidth: '600px',
-    margin: '0 auto',
-  },
-  header: {
-    fontSize: '24px',
-    color: '#16a34a', 
-    fontWeight: 'bold',
-    marginBottom: '20px',
-    textAlign: 'center',
-  },
-  text: {
-    fontSize: '16px',
-    color: '#4b5563', 
-    marginBottom: '20px',
-    textAlign: 'center',
-  },
-  detailsContainer: {
-    backgroundColor: '#ffffff',
-    padding: '20px',
-    borderRadius: '8px',
-    marginBottom: '20px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', 
-  },
-  subHeader: {
-    fontSize: '20px',
-    color: '#1f2937', 
-    fontWeight: '600',
-    marginBottom: '15px',
-    textAlign: 'center',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    marginBottom: '20px',
-  },
-  tableHeader: {
-    backgroundColor: '#e5e7eb',
-    padding: '10px',
-    textAlign: 'left',
-    fontSize: '16px',
-    color: '#374151', 
-  },
-  tableCell: {
-    padding: '10px',
-    borderBottom: '1px solid #e5e7eb',
-    fontSize: '16px',
-    color: '#4b5563',
-  },
-  totalAmount: {
-    fontSize: '18px',
-    color: '#1f2937', 
-    fontWeight: '600',
-    textAlign: 'center',
-    marginTop: '20px',
-  },
-  deliveryInfo: {
-    backgroundColor: '#ffffff',
-    padding: '20px',
-    borderRadius: '8px',
-    marginBottom: '20px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  },
-  detailItem: {
-    fontSize: '16px',
-    color: '#4b5563',
-    marginBottom: '10px',
-  },
-  footerText: {
-    fontSize: '14px',
-    color: '#6b7280',
-    marginTop: '20px',
-    textAlign: 'center',
-  },
-  link: {
-    color: '#3b82f6',
-    textDecoration: 'none',
-  },
+  `;
 };
 
 export default OrderConfirmationEmail;

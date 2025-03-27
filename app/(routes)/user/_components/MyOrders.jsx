@@ -37,8 +37,12 @@ function MyOrders() {
         {orderList?.map((order, index) => (
           <div key={index} className='p-3 border rounded-lg flex flex-col gap-3'>
             <h2 className='font-bold'>{moment(order?.createdAt).format('DD-MM-YYYY')}</h2>
-            <h2 className='flex text-sm justify-between'>Order Total Amount: ₦<span>{(order.orderAmount).toFixed(2)}</span></h2>
-            <h2 className='flex text-sm justify-between'>Address<span>{order.address}, {order.zipCode}</span></h2>
+            <h2 className='text-sm'>
+              Order Total Amount: <span className='font-semibold'>₦{(order.orderAmount).toFixed(2)}</span>
+            </h2>
+            <h2 className='text-sm'>
+              Address: <span className='font-semibold'>{order.address}, {order.zipCode}</span>
+            </h2>
 
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
@@ -50,11 +54,14 @@ function MyOrders() {
                     {order?.orderDetail?.map((item, index) => (
                       <div key={index} className='flex justify-between'>
                         <h2>{item.name}</h2>
-                        <h2>₦{item.price}</h2>
+                        <h2 className='font-semibold'>₦{item.price}</h2>
                       </div>
                     ))}
                     <hr />
-                    <h2 className='font-bold justify-between text-md mt-2'>Total Order Amount (including Taxes + Delivery): <span>{(order.orderAmount).toFixed(2)}</span></h2>
+                    <h2 className='font-bold text-md mt-2'>
+                      Total Order Amount (Including VAT):{' '}
+                      <span className='font-semibold'>₦{(order.orderAmount).toFixed(2)}</span>
+                    </h2>
                   </div>
                 </AccordionContent>
               </AccordionItem>

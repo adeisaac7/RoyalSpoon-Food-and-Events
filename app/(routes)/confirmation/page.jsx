@@ -39,13 +39,14 @@ function Confirmation() {
             </p>
             <p className="text-gray-700">
               <strong>Total Amount:</strong> ₦{totalAmount}
+              <br />(Delivery fee will be paid when your order arrives)
             </p>
           </div>
         </div>
 
         <p className="text-gray-600 mb-6">
           We will send you an email with the details of your order shortly. If you have any questions, please contact us at{' '}
-          <a href="mailto:          royalspoonfoods4@gmail.com" className="text-blue-500 hover:underline">
+          <a href="mailto:royalspoonfoods4@gmail.com" className="text-blue-500 hover:underline">
           royalspoonfoods4@gmail.com
           </a>
           .

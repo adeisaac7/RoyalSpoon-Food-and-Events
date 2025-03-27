@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 import { Button } from '@/components/ui/button';
 import { SignInButton, SignOutButton, SignUpButton, useUser } from '@clerk/nextjs';
 import { ShoppingCart } from 'lucide-react';
@@ -54,11 +54,20 @@ const Header = () => {
         <Image
           src="/logo.png"
           alt="LOGO"
-          width={70}
-          height={70}
-          className="w-14 h-14 md:w-20 md:h-20 cursor-pointer"
+          width={100}
+          height={100}
+          className="w-30 h-30 md:w-25 md:h-25 cursor-pointer"
         />
       </Link>
+
+      {/* Business Name or Slogan in the middle */}
+      <div className='flex-1 text-center'>
+        <h1 className='text-xl md:text-2xl font-bold'>
+          <span className='text-primary'>Royalspoon</span>{' '}
+          <span className=''>Foods & Events</span>
+        </h1>
+        <p className='text-sm md:text-md text-gray-600'>Home of Taste, <span  className='text-primary'>Flavour for Royalties</span></p>
+      </div>
 
       {/* Cart and User Menu */}
       <div className='flex items-center gap-4'>

@@ -17,7 +17,7 @@ function Checkout() {
   const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
   const [cart, setCart] = useState([]);
   const [SubTotal, setSubTotal] = useState(0);
-  const [deliveryAmount, setDeliveryAmount] = useState(5);
+  // const [deliveryAmount, setDeliveryAmount] = useState(5);
   const [taxAmount, setTaxAmount] = useState(0);
   const [total, setTotal] = useState(0);
   const [userName, setUserName] = useState("");
@@ -50,8 +50,8 @@ function Checkout() {
   const calculateTotalAmount = (cart_) => {
     let total = cart_.reduce((sum, item) => sum + item.price, 0);
     setSubTotal(total.toFixed(2));
-    setTaxAmount(total * 0.09);
-    setTotal(total + total * 0.09 + deliveryAmount);
+    setTaxAmount(total * 0.075);
+    setTotal(total + total * 0.09);
   };
 
   const handlePaymentSuccess = async (reference) => {
@@ -68,9 +68,9 @@ function Checkout() {
       toast.error("Please fill in all fields before proceeding.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     const data = {
       email: user?.primaryEmailAddress.emailAddress,
       orderAmount: total,
@@ -80,11 +80,11 @@ function Checkout() {
       address: address,
       zipCode: zip,
     };
-
+  
     try {
       const resp = await GlobalApi.CreateNewOrder(data);
       const resultId = resp?.createOrder?.id;
-
+  
       if (resultId) {
         for (const item of cart) {
           await GlobalApi.UpdateOrderToAddOrderItems(
@@ -94,11 +94,11 @@ function Checkout() {
             user?.primaryEmailAddress.emailAddress
           );
         }
-
+  
         setLoading(false);
         toast.success("Order created Successfully");
-
-        // Send confirmation email
+  
+        // Send confirmation email to the user and notification email to the admin
         const orderDetails = {
           userName: user?.fullName,
           email: user?.primaryEmailAddress.emailAddress,
@@ -109,10 +109,10 @@ function Checkout() {
           orderItems: cart,
           subtotal: SubTotal,
           taxAmount: taxAmount,
-          deliveryAmount: deliveryAmount,
+          // deliveryAmount: deliveryAmount,
           totalAmount: total,
         };
-
+  
         const emailResponse = await fetch("/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,17 +121,17 @@ function Checkout() {
             orderDetails,
           }),
         });
-
+  
         if (!emailResponse.ok) {
-          toast.error("Error sending confirmation email");
+          toast.error("Error sending emails");
         } else {
-          toast.success("Confirmation email sent");
+          toast.success("Emails sent successfully");
         }
-
+  
         setCart([]);
         localStorage.setItem("cart", JSON.stringify([]));
         setUpdateCart((prev) => !prev);
-
+  
         // Redirect to confirmation page
         router.replace(
           `/confirmation?orderId=${resultId}&totalAmount=${total.toFixed(
@@ -180,8 +180,8 @@ function Checkout() {
           <h2 className="text-center font-bold text-lg bg-gray-300 py-2">Total Cart ({cart?.length})</h2>
           <div className="p-4 space-y-4">
             <h2 className="flex justify-between">Subtotal: <span>₦{SubTotal}</span></h2>
-            <h2 className="flex justify-between">Delivery: <span>₦{deliveryAmount}</span></h2>
-            <h2 className="flex justify-between">Tax (9%): <span>₦{taxAmount.toFixed(2)}</span></h2>
+            {/* <h2 className="flex justify-between">Delivery: <span>₦{deliveryAmount}</span></h2> */}
+            <h2 className="flex justify-between">VAT (7.5%): <span>₦{taxAmount.toFixed(2)}</span></h2>
             <hr />
             <h2 className="font-bold flex justify-between">Total: <span>₦{total.toFixed(2)}</span></h2>
             

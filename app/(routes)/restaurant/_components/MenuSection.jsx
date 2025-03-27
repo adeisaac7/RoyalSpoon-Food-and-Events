@@ -14,8 +14,12 @@ function MenuSection({ restaurant }) {
 
   useEffect(() => {
     if (restaurant?.menu && restaurant.menu.length > 0) {
-      FilterMenu(restaurant.menu[0].category.name); // Filter by the first category by default
+      FilterMenu(restaurant.menu[0].category.name); 
     }
+
+    console.log("Restaurant Data in MenuSection:", restaurant);
+    console.log("Categories in MenuSection:", restaurant?.categories);
+    console.log("Menu in MenuSection:", restaurant?.menu);
   }, [restaurant]);
 
   const FilterMenu = (categoryName) => {
@@ -26,7 +30,7 @@ function MenuSection({ restaurant }) {
         menuItem: result.menuItem,
       });
     } else {
-      setMenuItemList({ category: "", menuItem: [] }); // Set a default value if no items match
+      setMenuItemList({ category: "", menuItem: [] });
     }
   };
 
@@ -87,27 +91,28 @@ function MenuSection({ restaurant }) {
             {menuItemList?.menuItem?.length > 0 ? (
               menuItemList.menuItem.map((item, index) => (
                 <div
-                  className="p-4 border rounded-xl hover:shadow-lg transition-shadow cursor-pointer"
+                  className="p-4 border rounded-xl hover:shadow-lg transition-shadow cursor-pointer flex flex-col"
                   key={index}
                 >
-                  <div className="relative h-40 w-full">
+                  <div className="relative w-full h-48 mb-4">
                     {item?.productImage?.url ? (
                       <Image
                         src={item.productImage.url}
                         alt={item.name}
-                        fill
-                        className="object-cover rounded-lg"
+                        width={300} 
+                        height={200} 
+                        className="object-cover rounded-lg w-full h-full"
                       />
                     ) : (
                       <div className="bg-slate-200 h-full w-full rounded-lg"></div>
                     )}
                   </div>
-                  <div className="mt-3">
+                  <div className="flex flex-col gap-2">
                     <h2 className="font-bold text-lg">{item.name}</h2>
-                    <p className="text-sm text-gray-500 line-clamp-2 mt-1">
+                    <p className="text-sm text-gray-500 line-clamp-2">
                       {item.description}
                     </p>
-                    <div className="flex justify-between items-center mt-3">
+                    <div className="flex justify-between items-center mt-2">
                       <h2 className="font-bold text-primary">₦{item.price}</h2>
                       <SquarePlus
                         className="cursor-pointer text-primary"
